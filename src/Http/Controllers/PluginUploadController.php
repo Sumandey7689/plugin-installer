@@ -12,7 +12,7 @@ class PluginUploadController extends Controller
 {
     public function showForm()
     {
-        return view('plugin_upload');
+        return view('plugininstaller::plugin_upload');
     }
 
     public function listPlugins()
