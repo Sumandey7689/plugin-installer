@@ -6,7 +6,7 @@ A modular plugin management system for Laravel that allows you to upload, instal
 
 ## 📦 Package Info
 
-- **Package Name:** `sumandey7689/plugin-installer`
+- **Package Name:** `sumandey8976/plugin-installer`
 - **Framework:** Laravel 10+
 - **PHP:** ^8.1
 - **License:** MIT
