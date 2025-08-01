@@ -29,4 +29,4 @@ A modular plugin management system for Laravel that allows you to upload, instal
 ### Step 1: Install via Composer
 
 ```bash
-composer require sumandey7689/plugin-installer
+composer require sumandey8976/plugin-installer

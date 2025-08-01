@@ -5,13 +5,13 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Sumandey7689\\PluginInstaller\\": "src/"
+            "Sumandey8976\\PluginInstaller\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Sumandey7689\\PluginInstaller\\PluginInstallerServiceProvider"
+                "Sumandey8976\\PluginInstaller\\PluginInstallerServiceProvider"
             ]
         }
     },

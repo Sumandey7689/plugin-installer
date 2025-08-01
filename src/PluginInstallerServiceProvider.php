@@ -1,6 +1,6 @@
 <?php
 
-namespace Sumandey7689\PluginInstaller;
+namespace Sumandey8976\PluginInstaller;
 
 use Illuminate\Support\ServiceProvider;
 

@@ -1,6 +1,6 @@
 <?php
 
-use PluginInstaller\Http\Controllers\PluginUploadController;
+use Sumandey8976\PluginInstaller\Http\Controllers\PluginUploadController;
 
 Route::get('/plugins', [PluginUploadController::class, 'showForm']);
 Route::get('/plugins/list', [PluginUploadController::class, 'listPlugins'])->name('plugins.list');
