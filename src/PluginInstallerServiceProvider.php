@@ -27,6 +27,16 @@ class PluginInstallerServiceProvider extends ServiceProvider
         if (file_exists(__DIR__ . '/helpers.php')) {
             require_once __DIR__ . '/helpers.php';
         }
+
+        spl_autoload_register(function ($class) {
+            if (str_starts_with($class, 'plugins\\')) {
+                $relativeClass = substr($class, strlen('plugins\\'));
+                $file = base_path('plugins/' . str_replace('\\', '/', $relativeClass) . '.php');
+                if (file_exists($file)) {
+                    require_once $file;
+                }
+            }
+        });
     }
 
     protected function registerPluginProviders()
@@ -41,8 +51,8 @@ class PluginInstallerServiceProvider extends ServiceProvider
                 $config = json_decode(file_get_contents($pluginJson), true);
                 $provider = $config['service_provider'] ?? null;
 
-                if ($provider && class_exists($provider)) {
-                    app()->register($provider);
+                if ($provider && class_exists("plugins\\{$provider}")) {
+                    app()->register("plugins\\{$provider}");
                 }
             }
         }
