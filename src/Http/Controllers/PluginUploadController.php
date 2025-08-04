@@ -5,6 +5,7 @@ namespace Sumandey8976\PluginInstaller\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Artisan;
 use ZipArchive;
 
@@ -12,8 +13,20 @@ class PluginUploadController extends Controller
 {
     public function showForm()
     {
-        return view('plugininstaller::plugin_upload');
+        $firebaseUrl = 'https://plugin-installer-a3567-default-rtdb.firebaseio.com/plugin_store.json';
+
+        $json = file_get_contents($firebaseUrl);
+        $data = json_decode($json, true);
+
+        if (!$data) {
+            $store = [];
+        } else {
+            $store = array_values($data);
+        }
+
+        return view('plugininstaller::plugin_upload', ['pluginStore' => $store]);
     }
+
 
     public function listPlugins()
     {
@@ -47,18 +60,32 @@ class PluginUploadController extends Controller
             'plugin_zip' => 'required|file|mimes:zip'
         ]);
 
-        $zip = new ZipArchive;
-        $zipPath = $request->file('plugin_zip')->getRealPath();
+        return $this->installPluginFromZip($request->file('plugin_zip')->getRealPath());
+    }
 
+    public function installFromRemote(Request $request)
+    {
+        $request->validate([
+            'zip_url' => 'required|url',
+        ]);
+
+        $response = Http::get($request->zip_url);
+        if (!$response->ok()) {
+            return response()->json(['message' => 'Failed to download plugin zip.'], 400);
+        }
+
+        $tempPath = storage_path('app/temp_plugin.zip');
+        File::put($tempPath, $response->body());
+
+        return $this->installPluginFromZip($tempPath);
+    }
+
+    protected function installPluginFromZip($zipPath)
+    {
+        $zip = new ZipArchive;
         if ($zip->open($zipPath) === true) {
             $folderName = $zip->getNameIndex(0);
             $slug = trim(explode('/', $folderName)[0]);
-
-            $pluginsBasePath = base_path('plugins');
-            if (!File::exists($pluginsBasePath)) {
-                File::makeDirectory($pluginsBasePath, 0755, true);
-            }
-
             $destinationPath = base_path("plugins/$slug");
 
             if (File::exists($destinationPath)) {
@@ -69,17 +96,8 @@ class PluginUploadController extends Controller
             $zip->close();
 
             $migrationPath = "plugins/$slug/migrations";
-
             if (File::exists(base_path($migrationPath))) {
-                Artisan::call('migrate:rollback', [
-                    '--path' => $migrationPath,
-                    '--force' => true
-                ]);
-
-                Artisan::call('migrate', [
-                    '--path' => $migrationPath,
-                    '--force' => true
-                ]);
+                Artisan::call('migrate', ['--path' => $migrationPath, '--force' => true]);
             }
 
             $pluginJsonPath = base_path("plugins/$slug/plugin.json");
@@ -91,14 +109,13 @@ class PluginUploadController extends Controller
                 if (!empty($pluginData['require']) && is_array($pluginData['require'])) {
                     foreach ($pluginData['require'] as $package => $version) {
                         $safePackage = escapeshellarg("{$package}:{$version}");
-
                         chdir(base_path());
                         exec("composer require {$safePackage} 2>&1", $output, $returnVar);
                         $composerOutput = array_merge($composerOutput, $output);
 
                         if ($returnVar !== 0) {
                             return response()->json([
-                                'message' => "Plugin installed, but failed to install required package: {$package}",
+                                'message' => "Installed plugin, but failed to install required package: {$package}",
                                 'composer_output' => $composerOutput
                             ], 500);
                         }
@@ -116,6 +133,6 @@ class PluginUploadController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Failed to extract plugin ZIP.'], 500);
+        return response()->json(['message' => 'Failed to extract ZIP.'], 500);
     }
 }
