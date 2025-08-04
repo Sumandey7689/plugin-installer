@@ -30,3 +30,13 @@ A modular plugin management system for Laravel that allows you to upload, instal
 
 ```bash
 composer require sumandey8976/plugin-installer
+
+
+📂 Access the Plugin UI
+
+Once installed, visit the following route in your browser:
+
+http://your-site.test/plugins
+Replace your-site.test with your actual domain.
+
+This will open the Plugin Manager UI, where you can upload and manage plugins easily.
