@@ -248,6 +248,11 @@
     <div class="container">
         <h1 class="mb-3"><i class="fas fa-plug text-primary me-2"></i>Plugin Manager</h1>
 
+        <div style="position:fixed;bottom:10px;right:15px;font-size:0.75rem;color:#666;z-index:9999;">
+            Developed by <a href="https://github.com/sumandey7689" target="_blank"
+                style="color:#0dcaf0;text-decoration:none;">sumandey7689</a>
+        </div>
+
         <div class="upload-section" id="uploadTrigger">
             <i class="fas fa-file-archive"></i>
             <h5 class="mb-1">Upload a Plugin ZIP</h5>
