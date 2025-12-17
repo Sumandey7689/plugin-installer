@@ -95,10 +95,15 @@ class PluginUploadController extends Controller
             $zip->extractTo(base_path('plugins'));
             $zip->close();
 
-            $migrationPath = "plugins/$slug/migrations";
+            $migrationPath = "plugins/$slug/database/migrations";
             if (File::exists(base_path($migrationPath))) {
                 Artisan::call('migrate', ['--path' => $migrationPath, '--force' => true]);
             }
+
+            Artisan::call('vendor:publish', [
+                '--tag' => strtolower($slug) . '-assets',
+                '--force' => true
+            ]);
 
             $pluginJsonPath = base_path("plugins/$slug/plugin.json");
             $composerOutput = [];
