@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Artisan;
+use Throwable;
 use ZipArchive;
 
 class PluginUploadController extends Controller
@@ -100,10 +101,23 @@ class PluginUploadController extends Controller
                 Artisan::call('migrate', ['--path' => $migrationPath, '--force' => true]);
             }
 
-            Artisan::call('vendor:publish', [
-                '--tag' => strtolower($slug) . '-assets',
-                '--force' => true
-            ]);
+            $assetPath  = base_path("plugins/$slug/assets");
+            $publicPath = public_path("plugins/$slug");
+
+            if (File::exists($assetPath)) {
+                File::ensureDirectoryExists(dirname($publicPath));
+
+                if (File::exists($publicPath) || is_link($publicPath)) {
+                    File::deleteDirectory($publicPath);
+                    @unlink($publicPath);
+                }
+
+                try {
+                    symlink($assetPath, $publicPath);
+                } catch (Throwable $e) {
+                    File::copyDirectory($assetPath, $publicPath);
+                }
+            }
 
             $pluginJsonPath = base_path("plugins/$slug/plugin.json");
             $composerOutput = [];
