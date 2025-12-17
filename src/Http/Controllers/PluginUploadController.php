@@ -116,6 +116,7 @@ class PluginUploadController extends Controller
                     symlink($assetPath, $publicPath);
                 } catch (Throwable $e) {
                     File::copyDirectory($assetPath, $publicPath);
+                    File::deleteDirectory($assetPath);
                 }
             }
 
