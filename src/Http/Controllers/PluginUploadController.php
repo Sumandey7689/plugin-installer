@@ -102,7 +102,7 @@ class PluginUploadController extends Controller
             }
 
             $assetPath  = base_path("plugins/$slug/assets");
-            $publicPath = public_path("plugins/$slug");
+            $publicPath = public_path("packages/$slug");
 
             if (File::exists($assetPath)) {
                 File::ensureDirectoryExists(dirname($publicPath));
