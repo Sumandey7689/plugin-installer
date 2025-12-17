@@ -3,7 +3,7 @@
     "description": "A Laravel plugin installer system",
     "type": "library",
     "license": "MIT",
-    "version": "2.0.5",
+    "version": "3.0.0",
     "autoload": {
         "psr-4": {
             "Sumandey8976\\PluginInstaller\\": "src/"
