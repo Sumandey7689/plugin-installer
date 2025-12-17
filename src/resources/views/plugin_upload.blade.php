@@ -219,6 +219,11 @@
             color: var(--text-muted);
         }
 
+        .text-muted {
+            --bs-text-opacity: 1;
+            color: rgba(158, 206, 255, 0.75) !important;
+        }
+
         .plugin-info ul li i {
             margin-right: 6px;
             color: var(--success);
